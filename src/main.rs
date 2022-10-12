@@ -1,3 +1,10 @@
+mod arguments;
+
+use arguments::LatableArgs;
+use clap::Parser;
+
 fn main() {
-    println!("Hello, world!");
+    let args = LatableArgs::parse();
+
+    println!("{:?}", args);
 }
