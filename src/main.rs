@@ -1,4 +1,5 @@
 mod arguments;
+mod formatter;
 
 use arguments::LatableArgs;
 use clap::Parser;
@@ -21,6 +22,6 @@ fn main() {
         || "c".repeat(args.get_columns())
     );
 
-    println!("{:?}", args);
-    println!("{}", col_def);
+    println!("LaTeX table generated:\n");
+    println!("{}", formatter::format_latex_table(args.get_rows(), args.get_columns(), col_def));
 }
