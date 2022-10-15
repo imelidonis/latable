@@ -13,7 +13,7 @@ Options:
   -c, --columns <COLUMNS>     Number of columns
       --col-def <COLUMN_DEF>  Column Definition, eg. 'ccc' for 3 centered columns.
                               Default: all columns centered
-                              Accepted options: l (left-align), c (center-align), r (right - align).
+                              Accepted options: l (left-aligned), c (center-aligned), r (right-aligned).
   -h, --help                  Print help information
   -V, --version               Print version information
 ```
