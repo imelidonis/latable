@@ -14,7 +14,7 @@ pub struct LatableArgs {
     columns: usize,
 
     /// Column Definition, eg. 'ccc' for 3 centered columns. Default: all columns centered
-    /// Accepted options: l (left-align), c (center-align), r (right - align).
+    /// Accepted options: l (left-aligned), c (center-aligned), r (right-aligned).
     #[clap(
         verbatim_doc_comment,
         hide_default_value = true,
