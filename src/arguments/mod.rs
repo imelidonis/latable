@@ -6,11 +6,11 @@ use clap::Parser;
 #[clap(author, version, about = "A simple CLI tool to generate tables for LaTeX.")]
 pub struct LatableArgs {
     /// Number of rows
-    #[clap(short = 'r', long = "rows")]
+    #[clap(short = 'r', long = "rows", value_parser = dimension_check)]
     rows: usize,
     
     /// Number of columns
-    #[clap(short = 'c', long = "columns")]
+    #[clap(short = 'c', long = "columns", value_parser = dimension_check)]
     columns: usize,
 
     /// Column Definition, eg. 'ccc' for 3 centered columns. Default: all columns centered
@@ -64,5 +64,17 @@ fn column_def_validation(s: &str) -> Result<String, String> {
         Err(String::from("Column Definition can contain only: l, c or r"))
     } else {
         Ok(String::from(s))
+    }
+}
+
+fn dimension_check(s: &str) -> Result<usize, String> {
+    let dim: usize = s
+        .parse()
+        .map_err(|_| format!("'{}' isn't a valid dimension", s))?;
+    
+    if dim > 0 {
+        Ok(dim)
+    } else {
+        Err(String::from("Should have at least 1 cell"))
     }
 }
