@@ -2,12 +2,13 @@ mod arguments;
 mod formatter;
 
 use arguments::LatableArgs;
+use arguments::column_def::ColumnDef;
 use clap::Parser;
 
 fn main() {
     let args = LatableArgs::parse();
 
-    if args.has_col_def() {
+    if args.is_user_defined() {
         match args.col_def_size_validation() {
             Ok(_) => (),
             Err(msg) => {
@@ -17,10 +18,12 @@ fn main() {
         }
     }
 
-    let col_def = args.get_column_def().unwrap_or_else(
-        // if column definition wasn't provided, all columns are centered.
-        || "c".repeat(args.get_columns())
-    );
+    let col_def = match args.get_column_def() {
+        ColumnDef::Centered => "c".repeat(args.get_columns()),
+        ColumnDef::Left => "l".repeat(args.get_columns()),
+        ColumnDef::Right => "r".repeat(args.get_columns()),
+        ColumnDef::Custom(def) => def,
+    };
 
     println!("LaTeX table generated:\n");
     println!("{}", formatter::format_latex_table(args.get_rows(), args.get_columns(), col_def));
