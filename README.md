@@ -11,9 +11,10 @@ Usage: latable [OPTIONS] --rows <ROWS> --columns <COLUMNS>
 Options:
   -r, --rows <ROWS>           Number of rows
   -c, --columns <COLUMNS>     Number of columns
-      --col-def <COLUMN_DEF>  Column Definition, eg. 'ccc' for 3 centered columns.
-                              Default: all columns centered
-                              Accepted options: l (left-aligned), c (center-aligned), r (right-aligned).
+      --col-def <COLUMN_DEF>  Definition for each column. Provide either a rule for all columns or a
+                              sequence with l (left-aligned) | c (center-aligned) | r (right-aligned)
+                              for each column.
+                              [possible values: centered, left, right, <sequence>] [default: centered]
   -h, --help                  Print help information
   -V, --version               Print version information
 ```
@@ -53,3 +54,19 @@ LaTeX table generated:
 
 ```
 
+Table with 4 rows and 10 left-aligned columns. Instead of typing 'l'
+for each column, you can pass the option 'left'.
+
+```
+$ latable -r 4 -c 10 --col-def left
+LaTeX table generated:
+
+\begin{table}[ht]
+        \begin{tabular}{llllllllll}
+                 & & & & & & & & & \\
+                 & & & & & & & & & \\
+                 & & & & & & & & & \\
+                 & & & & & & & & & 
+        \end{tabular}
+\end{table}
+```
