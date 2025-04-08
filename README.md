@@ -78,7 +78,7 @@ LaTeX table generated:
 \end{table}
 ```
 
-Parse csv file 'file.csv' and make the table left-align
+Parse csv file 'file.csv' and make the table left-aligned.
 
 ```
 $ cat file.csv
