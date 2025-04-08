@@ -6,7 +6,11 @@ use arguments::column_def::ColumnDef;
 use clap::Parser;
 
 fn main() {
-    let args = LatableArgs::parse();
+    let mut args = LatableArgs::parse();
+
+    if args.has_csv() {
+        args.parse_sizes();
+    }
 
     if args.is_user_defined() {
         match args.col_def_size_validation() {
@@ -26,5 +30,9 @@ fn main() {
     };
 
     println!("LaTeX table generated:\n");
-    println!("{}", formatter::format_latex_table(args.get_rows(), args.get_columns(), col_def));
+    if args.has_csv() {
+        println!("{}", formatter::format_latex_table_csv(args.get_rows(), args.get_columns(), col_def, args.get_csv_path().as_ref().unwrap().to_string()));
+    } else {
+        println!("{}", formatter::format_latex_table(args.get_rows(), args.get_columns(), col_def));
+    }
 }

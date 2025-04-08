@@ -4,9 +4,15 @@ A simple CLI tool to generate tables for LaTeX. You can specify the number of ro
 and columns and latable will generate a template table of that size. By default,
 all columns are centered but you can specify the exact alignment of each column.
 
+'latable' can also parse a csv file to generate the table. It generates a warning if
+the csv file:
+
+- has differnt number of  rows than what is spacified
+- has rows with differnt number of columns
+
 ## Usage
 ```
-Usage: latable [OPTIONS] --rows <ROWS> --columns <COLUMNS>
+Usage: latable [OPTIONS]
 
 Options:
   -r, --rows <ROWS>           Number of rows
@@ -15,8 +21,9 @@ Options:
                               sequence with l (left-aligned) | c (center-aligned) | r (right-aligned)
                               for each column.
                               [possible values: centered, left, right, <sequence>] [default: centered]
-  -h, --help                  Print help information
-  -V, --version               Print version information
+      --csv <CSV_PATH>        Parse csv file to create the table. Must be comma-separated
+  -h, --help                  Print help
+  -V, --version               Print version
 ```
 
 ## Examples
@@ -32,7 +39,7 @@ LaTeX table generated:
          & & & & \\
          & & & & \\
          & & & & \\
-         & & & & 
+         & & & &
     \end{tabular}
 \end{table}
 ```
@@ -48,7 +55,7 @@ LaTeX table generated:
          & & & & \\
          & & & & \\
          & & & & \\
-         & & & & 
+         & & & &
     \end{tabular}
 \end{table}
 
@@ -66,7 +73,25 @@ LaTeX table generated:
                  & & & & & & & & & \\
                  & & & & & & & & & \\
                  & & & & & & & & & \\
-                 & & & & & & & & & 
+                 & & & & & & & & &
+        \end{tabular}
+\end{table}
+```
+
+Parse csv file 'file.csv' and make the table left-align
+
+```
+$ cat file.csv
+c1,c2
+value1,value2
+
+$ latable --csv "./file.csv" --col-def left
+LaTeX table generated:
+
+\begin{table}[ht]
+        \begin{tabular}{ll}
+                c1 & c2 \\
+                value1 & value2
         \end{tabular}
 \end{table}
 ```

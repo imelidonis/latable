@@ -2,6 +2,8 @@
 
 pub mod column_def;
 
+use std::fs::read_to_string;
+
 use clap::Parser;
 use column_def::ColumnDef;
 
@@ -9,12 +11,12 @@ use column_def::ColumnDef;
 #[clap(author, version, about = "A simple CLI tool to generate tables for LaTeX.")]
 pub struct LatableArgs {
     /// Number of rows
-    #[clap(short = 'r', long = "rows", value_parser = dimension_check)]
-    rows: usize,
+    #[clap(short = 'r', long = "rows", value_parser = dimension_check, required_unless_present("csv_path"))]
+    rows: Option<usize>,
 
     /// Number of columns
-    #[clap(short = 'c', long = "columns", value_parser = dimension_check)]
-    columns: usize,
+    #[clap(short = 'c', long = "columns", value_parser = dimension_check, required_unless_present("csv_path"))]
+    columns: Option<usize>,
 
     // FIXME: better doc
     /// Definition for each column. Provide either a rule for all columns or a
@@ -29,6 +31,10 @@ pub struct LatableArgs {
         default_value_t = ColumnDef::Centered
     )]
     column_def: ColumnDef,
+
+    /// Parse csv file to create the table. Must be comma-separated.
+    #[clap(long = "csv")]
+    csv_path: Option<String>,
 }
 
 impl LatableArgs {
@@ -37,12 +43,16 @@ impl LatableArgs {
     }
 
     pub fn get_columns(&self) -> usize {
-        self.columns
+        self.columns.unwrap()
     }
 
     #[allow(dead_code)]
     pub fn get_rows(&self) -> usize {
-        self.rows
+        self.rows.unwrap()
+    }
+
+    pub fn get_csv_path(&self) -> &Option<String> {
+        &self.csv_path
     }
 
     pub fn is_user_defined(&self) -> bool {
@@ -56,17 +66,41 @@ impl LatableArgs {
             },
             // The column definition should contain the same number of columns
             ColumnDef::Custom(col_def) => {
-                if col_def.chars().count() == self.columns {
+                if col_def.chars().count() == self.get_columns() {
                     Ok(())
                 } else {
                     Err(format!(
                         "The column definition should contain the same number of columns. Expected: {} found: {}",
-                        self.columns,
+                        self.get_columns(),
                         col_def.chars().count()
                     ))
                 }
             }
         }
+    }
+
+    pub fn has_csv(&self) -> bool {
+        matches!(self.csv_path, Some(_))
+    }
+
+    pub fn parse_sizes(&mut self) {
+        let file = read_to_string(self.get_csv_path().as_ref().unwrap().as_str()).unwrap();
+
+        let mut lines = file.lines();
+
+        let first_line = lines.next();
+        let rows_counter = lines.count() + 1; // + 1 for consumed first line
+        let column_counter = first_line.unwrap().split(",").map(|s| s.trim()).count();
+
+        match self.rows {
+            None => self.rows = Some(rows_counter),
+            _ => {}
+        };
+
+        match self.columns {
+            None => self.columns = Some(column_counter),
+            _ => {}
+        };
     }
 }
 
